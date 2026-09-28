@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4338CA" />
+    </linearGradient>
+  </defs>
+  <circle cx="16" cy="16" r="15" fill="#0B0D13" stroke="url(#glow)" stroke-width="1.5" />
+  <text x="16" y="21" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="12" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.5">AS</text>
+  <circle cx="24.5" cy="7.5" r="3" fill="#4F46E5" />
+  <circle cx="24.5" cy="7.5" r="1.5" fill="#38BDF8" />
+</svg>
