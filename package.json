@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm install --legacy-peer-deps && next build",
     "start": "next start",
     "lint": "next lint",
     "generate-depth": "python scripts/generate_depth_map.py"
@@ -17,14 +17,12 @@
   "dependencies": {
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.17.5",
-    "@react-three/postprocessing": "^2.16.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.21",
     "gsap": "^3.12.5",
     "lenis": "^1.1.9",
     "lucide-react": "^0.424.0",
     "next": "14.2.5",
-    "postprocessing": "^6.36.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.4.0",
