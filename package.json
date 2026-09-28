@@ -9,6 +9,11 @@
     "lint": "next lint",
     "generate-depth": "python scripts/generate_depth_map.py"
   },
+  "overrides": {
+    "postprocessing": {
+      "three": "^0.186.1"
+    }
+  },
   "dependencies": {
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.17.5",
