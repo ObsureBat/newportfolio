@@ -988,7 +988,7 @@ export default function Home() {
         {/* Liquid Glass Pill Container */}
         <div 
           id="mobile-nav-container"
-          className="relative max-w-[calc(100%-24px)] px-1 py-1 rounded-[999px] overflow-x-auto scrollbar-hide"
+          className="relative max-w-[85%] sm:max-w-[90%] px-1 py-1 rounded-[999px] overflow-x-auto scrollbar-hide"
           style={{
             background: 'linear-gradient(135deg, var(--glass-bg-start), var(--glass-bg-end))',
             backdropFilter: `blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))`,
