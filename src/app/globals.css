@@ -7,6 +7,40 @@
 :root {
   --font-inter: 'Inter', sans-serif;
   --font-syne: 'Syne', sans-serif;
+  
+  /* Liquid Glass CSS Variables */
+  --glass-bg-start: rgba(255, 255, 255, 0.08);
+  --glass-bg-end: rgba(255, 255, 255, 0.14);
+  --glass-blur: 12px;
+  --glass-saturate: 160%;
+  --glass-brightness: 1.05;
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-highlight: rgba(255, 255, 255, 0.8);
+  --glass-inner-glow: rgba(255, 255, 255, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.12);
+  --glass-active-bg: rgba(255, 255, 255, 0.25);
+  --glass-fallback-bg: rgba(255, 255, 255, 0.7);
+  
+  /* Nav text color - always black */
+  --nav-text-color: #000000;
+}
+
+/* Hide scrollbar for horizontal scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 html {
@@ -63,7 +97,7 @@ body::before {
   }
 }
 
-/* Hide scrollbar for horizontal scrolling elements */
+/* Hide scrollbar for horizontal scrolling */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

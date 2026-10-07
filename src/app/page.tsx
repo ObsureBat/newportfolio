@@ -100,18 +100,18 @@ export default function Home() {
             
             // Auto-scroll mobile navigation to active item
             if (isMobile) {
-              const navEl = document.getElementById('mobile-nav');
-              if (navEl) {
-                const navButtons = navEl.querySelectorAll('button');
+              const navContainer = document.getElementById('mobile-nav-container');
+              if (navContainer) {
+                const navButtons = navContainer.querySelectorAll('button');
                 const activeButton = Array.from(navButtons).find(
                   (btn, index) => NAV_ITEMS[index].id === item.id
                 );
                 if (activeButton) {
-                  const navWidth = navEl.offsetWidth;
+                  const navWidth = navContainer.offsetWidth;
                   const buttonLeft = activeButton.offsetLeft;
                   const buttonWidth = activeButton.offsetWidth;
                   const scrollLeft = buttonLeft - (navWidth / 2) + (buttonWidth / 2);
-                  navEl.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                  navContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
                 }
               }
             }
@@ -295,7 +295,7 @@ export default function Home() {
           {/* ======================================================== */}
           {/* RIGHT COLUMN — SCROLLABLE CONTENT SECTIONS               */}
           {/* ======================================================== */}
-          <main id="content" className="pt-8 sm:pt-12 lg:w-7/12 lg:py-10 space-y-12 sm:space-y-20 pb-16 lg:pb-0">
+          <main id="content" className="pt-8 sm:pt-12 lg:w-7/12 lg:py-10 space-y-12 sm:space-y-20 pb-20 lg:pb-0">
             
             {/* ------------------------------------------------------ */}
             {/* SECTION: ABOUT                                         */}
@@ -967,7 +967,7 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* FOOTER — CLEAN MINIMAL (NO "HOW I MADE THIS")           */}
             {/* ------------------------------------------------------ */}
-            <footer className="pt-6 sm:pt-8 pb-20 sm:pb-16 lg:pb-16 border-t border-slate-200 text-xs text-slate-500 font-sans space-y-1">
+            <footer className="pt-6 sm:pt-8 pb-24 sm:pb-16 lg:pb-16 border-t border-slate-200 text-xs text-slate-500 font-sans space-y-1">
               <p className="text-slate-900 font-bold">
                 © 2026 Ayush Sharma
               </p>
@@ -982,32 +982,65 @@ export default function Home() {
       </div>
 
       {/* ======================================================== */}
-      {/* MOBILE BOTTOM NAVIGATION BAR                             */}
+      {/* MOBILE BOTTOM NAVIGATION BAR - iOS 26 LIQUID GLASS        */}
       {/* ======================================================== */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200">
-        <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide" id="mobile-nav">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeSection === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  const el = document.getElementById(item.id);
-                  if (!el) return;
-                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top, behavior: 'smooth' });
-                }}
-                className={`flex-shrink-0 px-3 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap min-h-[44px] ${
-                  isActive
-                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
+      <div className="lg:hidden fixed bottom-3 left-0 right-0 z-50 flex justify-center">
+        {/* Liquid Glass Pill Container */}
+        <div 
+          id="mobile-nav-container"
+          className="relative max-w-[calc(100%-24px)] px-1 py-1 rounded-[999px] overflow-x-auto scrollbar-hide"
+          style={{
+            background: 'linear-gradient(135deg, var(--glass-bg-start), var(--glass-bg-end))',
+            backdropFilter: `blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))`,
+            WebkitBackdropFilter: `blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))`,
+            border: `1px solid var(--glass-border)`,
+            boxShadow: `
+              inset 0 1px 0 var(--glass-highlight),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+              inset 0 0 16px var(--glass-inner-glow),
+              0 8px 28px var(--glass-shadow)
+            `
+          }}
+        >
+          {/* Fallback for browsers without backdrop-filter support */}
+          <style jsx>{`
+            @supports not (backdrop-filter: blur(1px)) {
+              .glass-fallback {
+                background: var(--glass-fallback-bg) !important;
+              }
+            }
+          `}</style>
+          
+          {/* Navigation content */}
+          <div className="relative flex items-center gap-0.5" id="mobile-nav">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById(item.id);
+                    if (!el) return;
+                    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                  }}
+                  aria-current={isActive ? 'page' : undefined}
+                  className="flex-shrink-0 relative px-2 sm:px-2.5 py-1.5 rounded-[999px] text-[8px] sm:text-[9px] font-semibold transition-all duration-250 whitespace-nowrap min-h-[36px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                  style={{
+                    background: isActive ? 'var(--glass-active-bg)' : 'transparent',
+                    color: 'var(--nav-text-color, #1e293b)',
+                    boxShadow: isActive ? `
+                      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                      0 2px 8px rgba(0, 0, 0, 0.08)
+                    ` : 'none'
+                  }}
+                >
+                  <span className="relative z-10">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
