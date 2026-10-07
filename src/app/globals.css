@@ -56,6 +56,22 @@ body::before {
   background: #94A3B8;
 }
 
+/* Mobile-specific scrollbar adjustments */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* Hide scrollbar for horizontal scrolling elements */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 ::selection {
   background-color: #0F172A;
   color: #FFFFFF;

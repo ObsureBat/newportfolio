@@ -83,10 +83,13 @@ export default function Home() {
   const [isResearchCaseStudyOpen, setIsResearchCaseStudyOpen] = useState(false);
   const [isResearchSimulationOpen, setIsResearchSimulationOpen] = useState(false);
 
-  // Active Scroll Spy
+  // Active Scroll Spy & Mobile Nav Auto-Scroll
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 180;
+      const isMobile = window.innerWidth < 1024;
+      const scrollPosition = window.scrollY + (isMobile ? 120 : 180);
+      
+      // Update active section
       for (const item of NAV_ITEMS) {
         const el = document.getElementById(item.id);
         if (el) {
@@ -94,6 +97,24 @@ export default function Home() {
           const height = el.offsetHeight;
           if (scrollPosition >= top && scrollPosition < top + height) {
             setActiveSection(item.id);
+            
+            // Auto-scroll mobile navigation to active item
+            if (isMobile) {
+              const navEl = document.getElementById('mobile-nav');
+              if (navEl) {
+                const navButtons = navEl.querySelectorAll('button');
+                const activeButton = Array.from(navButtons).find(
+                  (btn, index) => NAV_ITEMS[index].id === item.id
+                );
+                if (activeButton) {
+                  const navWidth = navEl.offsetWidth;
+                  const buttonLeft = activeButton.offsetLeft;
+                  const buttonWidth = activeButton.offsetWidth;
+                  const scrollLeft = buttonLeft - (navWidth / 2) + (buttonWidth / 2);
+                  navEl.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                }
+              }
+            }
             break;
           }
         }
@@ -108,7 +129,8 @@ export default function Home() {
     e.preventDefault();
     const el = document.getElementById(id);
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 30;
+    const isMobile = window.innerWidth < 1024;
+    const top = el.getBoundingClientRect().top + window.scrollY - (isMobile ? 80 : 30);
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
@@ -127,11 +149,11 @@ export default function Home() {
           {/* LEFT COLUMN — PROMINENT PORTRAIT, IDENTITY & NAV        */}
           {/* ======================================================== */}
           <header className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:max-h-screen lg:w-5/12 lg:flex-col lg:justify-between lg:py-8 xl:py-10 overflow-y-auto">
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               
               {/* Prominent, Clearly Visible Portrait */}
-              <div className="flex items-center gap-4 pt-1">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm shrink-0 group">
+              <div className="flex items-center gap-3 sm:gap-4 pt-1">
+                <div className="relative w-20 h-20 sm:w-24 sm:h-28 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm shrink-0 group">
                   <img
                     src="/assets/face-photo-v2.png"
                     alt="Ayush Sharma — Software Engineer"
@@ -139,18 +161,18 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border-2 border-indigo-500 text-xs font-mono font-bold text-indigo-700 shadow-sm">
-                    <span className="relative flex h-2.5 w-2.5">
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-50 border-2 border-indigo-500 text-[10px] sm:text-xs font-mono font-bold text-indigo-700 shadow-sm">
+                    <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-green-500"></span>
                     </span>
-                    <span>Available for Roles</span>
+                    <span className="whitespace-nowrap">Available for Roles</span>
                   </div>
-                  <div className="text-xs font-mono text-slate-500 leading-tight">
+                  <div className="text-[10px] sm:text-xs font-mono text-slate-500 leading-tight">
                     2026 CS Graduate
                   </div>
-                  <div className="text-xs font-mono text-slate-500 leading-tight">
+                  <div className="text-[10px] sm:text-xs font-mono text-slate-500 leading-tight">
                     Gurugram, India
                   </div>
                 </div>
@@ -158,12 +180,12 @@ export default function Home() {
 
               {/* Name & Title */}
               <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   <a href="#about" onClick={(e) => handleSmoothScroll(e, 'about')}>
                     Ayush Sharma
                   </a>
                 </h1>
-                <h2 className="text-base sm:text-lg font-medium text-slate-900">
+                <h2 className="text-sm sm:text-base lg:text-lg font-medium text-slate-900">
                   Software Engineer | Cloud &amp; Security
                 </h2>
                 <p className="text-xs sm:text-sm leading-relaxed text-slate-500 max-w-sm pt-1">
@@ -175,9 +197,9 @@ export default function Home() {
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <button
                   onClick={() => setIsResumeModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-mono font-semibold transition-all shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-mono font-semibold transition-all shadow-sm min-h-[44px]"
                 >
-                  <Eye className="w-3.5 h-3.5" />
+                  <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span>View Resume</span>
                 </button>
 
@@ -186,9 +208,9 @@ export default function Home() {
                   download="Ayush_Sharma_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-mono font-semibold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-mono font-semibold transition-colors min-h-[44px]"
                 >
-                  <FileDown className="w-3.5 h-3.5" />
+                  <FileDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span>Download PDF</span>
                 </a>
               </div>
@@ -273,14 +295,14 @@ export default function Home() {
           {/* ======================================================== */}
           {/* RIGHT COLUMN — SCROLLABLE CONTENT SECTIONS               */}
           {/* ======================================================== */}
-          <main id="content" className="pt-12 lg:w-7/12 lg:py-10 space-y-20">
+          <main id="content" className="pt-8 sm:pt-12 lg:w-7/12 lg:py-10 space-y-12 sm:space-y-20 pb-16 lg:pb-0">
             
             {/* ------------------------------------------------------ */}
             {/* SECTION: ABOUT                                         */}
             {/* ------------------------------------------------------ */}
-            <section id="about" className="scroll-mt-12" aria-label="About me">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="about" className="scroll-mt-16 sm:scroll-mt-12" aria-label="About me">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   About
                 </h2>
               </div>
@@ -312,30 +334,30 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: EXPERIENCE                                    */}
             {/* ------------------------------------------------------ */}
-            <section id="experience" className="scroll-mt-12" aria-label="Work experience">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="experience" className="scroll-mt-16 sm:scroll-mt-12" aria-label="Work experience">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Experience
                 </h2>
               </div>
 
               <div>
-                <ol className="space-y-8">
+                <ol className="space-y-4 sm:space-y-8">
                   {experiences.map((exp) => (
-                    <li key={exp.title} className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
-                      <div className="space-y-2">
+                    <li key={exp.title} className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                      <div className="space-y-2 sm:space-y-3">
                         
                         {/* Period & Role */}
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="text-xs font-mono text-slate-500 font-semibold uppercase">
+                          <span className="text-[10px] sm:text-xs font-mono text-slate-500 font-semibold uppercase">
                             {exp.period}
                           </span>
-                          <span className="text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                          <span className="text-[10px] sm:text-xs font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
                             {exp.type}
                           </span>
                         </div>
 
-                        <h3 className="font-bold text-slate-900 text-base">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base">
                           <button
                             onClick={() => setSelectedExperience(exp)}
                             className="inline-flex items-baseline font-bold leading-tight text-slate-900 hover:underline text-left transition-all"
@@ -343,7 +365,7 @@ export default function Home() {
                             <span>
                               {exp.title} · <span className="text-slate-500">{exp.company}</span>
                             </span>
-                            <ArrowUpRight className="inline-block h-3.5 w-3.5 ml-1" />
+                            <ArrowUpRight className="inline-block h-3 w-3 sm:h-3.5 sm:w-3.5 ml-1" />
                           </button>
                         </h3>
 
@@ -353,11 +375,11 @@ export default function Home() {
                         </p>
 
                         {/* Tech tags */}
-                        <ul className="flex flex-wrap gap-1.5 pt-1">
+                        <ul className="flex flex-wrap gap-1 sm:gap-1.5 pt-1">
                           {exp.title.includes('Freelance') ? (
                             ['React', 'TypeScript', 'Node.js', 'Electron', 'PostgreSQL', 'SQLite'].map((t) => (
                               <li key={t}>
-                                <div className="rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-mono text-slate-900">
+                                <div className="rounded-md bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-xs font-mono text-slate-900">
                                   {t}
                                 </div>
                               </li>
@@ -365,7 +387,7 @@ export default function Home() {
                           ) : (
                             ['TensorFlow', 'Transformer', 'BiLSTM', 'AWS WAF', 'GuardDuty'].map((t) => (
                               <li key={t}>
-                                <div className="rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-mono text-slate-900">
+                                <div className="rounded-md bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-xs font-mono text-slate-900">
                                   {t}
                                 </div>
                               </li>
@@ -377,10 +399,10 @@ export default function Home() {
                         <div className="pt-2">
                           <button
                             onClick={() => setSelectedExperience(exp)}
-                            className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
+                            className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
                           >
                             <span>Read More &amp; Key Achievements</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                           </button>
                         </div>
 
@@ -414,37 +436,37 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: SELECTED WORK / PROJECTS                      */}
             {/* ------------------------------------------------------ */}
-            <section id="projects" className="scroll-mt-12" aria-label="Selected projects">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="projects" className="scroll-mt-16 sm:scroll-mt-12" aria-label="Selected projects">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Projects
                 </h2>
               </div>
 
               <div>
-                <ul className="space-y-8">
+                <ul className="space-y-4 sm:space-y-8">
                   {projects.map((proj) => (
-                    <li key={proj.id} className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
-                      <div className="space-y-3">
+                    <li key={proj.id} className="p-4 sm:p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all">
+                      <div className="space-y-2.5 sm:space-y-3">
                         
                         {/* Number & Role */}
                         <div className="flex items-center justify-between">
-                          <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-900 text-white">
+                          <span className="font-mono text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-slate-900 text-white">
                             {proj.number}
                           </span>
-                          <span className="text-xs font-mono text-slate-500 uppercase">
+                          <span className="text-[10px] sm:text-xs font-mono text-slate-500 uppercase">
                             {proj.role}
                           </span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base sm:text-lg">
                           <button
                             onClick={() => setSelectedCaseStudy(proj)}
                             className="inline-flex items-baseline font-bold text-slate-900 hover:underline text-left transition-all"
                           >
                             <span>{proj.title}</span>
-                            <ArrowUpRight className="inline-block h-4 w-4 ml-1" />
+                            <ArrowUpRight className="inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 ml-1" />
                           </button>
                         </h3>
 
@@ -454,10 +476,10 @@ export default function Home() {
                         </p>
 
                         {/* Tech Stack Pills */}
-                        <ul className="flex flex-wrap gap-1.5 pt-1">
+                        <ul className="flex flex-wrap gap-1 sm:gap-1.5 pt-1">
                           {proj.stack.map((t) => (
                             <li key={t}>
-                              <div className="rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-mono text-slate-900">
+                              <div className="rounded-md bg-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-xs font-mono text-slate-900">
                                 {t}
                               </div>
                             </li>
@@ -465,13 +487,13 @@ export default function Home() {
                         </ul>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-wrap items-center gap-3 pt-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2">
                           <button
                             onClick={() => setSelectedCaseStudy(proj)}
-                            className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
+                            className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
                           >
                             <span>Read Case Study</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                           </button>
 
                           {proj.liveUrl && (
@@ -479,10 +501,10 @@ export default function Home() {
                               href={proj.liveUrl}
                               target="_blank"
                               rel="noreferrer noopener"
-                              className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
+                              className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
                             >
                               <span>Visit Live Site</span>
-                              <ExternalLink className="w-3 h-3" />
+                              <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </a>
                           )}
 
@@ -491,10 +513,10 @@ export default function Home() {
                               href={proj.githubUrl}
                               target="_blank"
                               rel="noreferrer noopener"
-                              className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-all"
+                              className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-all"
                             >
                               <span>GitHub</span>
-                              <ExternalLink className="w-3 h-3" />
+                              <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </a>
                           )}
                         </div>
@@ -509,23 +531,23 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: RESEARCH                                      */}
             {/* ------------------------------------------------------ */}
-            <section id="research" className="scroll-mt-12" aria-label="Research">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="research" className="scroll-mt-16 sm:scroll-mt-12" aria-label="Research">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Research
                 </h2>
               </div>
 
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all space-y-4">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="px-2.5 py-0.5 rounded bg-slate-100 text-slate-900 font-bold uppercase">
+              <div className="p-4 sm:p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono">
+                  <span className="px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded bg-slate-100 text-slate-900 font-bold uppercase">
                     IC3SE 2025 PRESENTATION
                   </span>
                   <span className="text-slate-500">Amity University</span>
                 </div>
 
                 <div className="space-y-1.5">
-                  <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base sm:text-lg">
                     {research.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -534,40 +556,40 @@ export default function Home() {
                 </div>
 
                 {/* 4 Verified Metric Pills */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono">
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                    <span className="text-base font-bold text-slate-900 block">97.1%</span>
-                    <span className="text-[10px] text-slate-500 uppercase">Accuracy</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 pt-1 font-mono">
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <span className="text-sm sm:text-base font-bold text-slate-900 block">97.1%</span>
+                    <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase">Accuracy</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                    <span className="text-base font-bold text-slate-900 block">23+</span>
-                    <span className="text-[10px] text-slate-500 uppercase">Attack Types</span>
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <span className="text-sm sm:text-base font-bold text-slate-900 block">23+</span>
+                    <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase">Attack Types</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                    <span className="text-base font-bold text-slate-900 block">3 Models</span>
-                    <span className="text-[10px] text-slate-500 uppercase">Hybrid DL</span>
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <span className="text-sm sm:text-base font-bold text-slate-900 block">3 Models</span>
+                    <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase">Hybrid DL</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                    <span className="text-base font-bold text-slate-900 block">AWS WAF</span>
-                    <span className="text-[10px] text-slate-500 uppercase">Mitigation</span>
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <span className="text-sm sm:text-base font-bold text-slate-900 block">AWS WAF</span>
+                    <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase">Mitigation</span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-2">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2">
                   <button
                     onClick={() => setIsResearchCaseStudyOpen(true)}
-                    className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-900 hover:underline transition-all"
                   >
                     <span>Read Full Case Study</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </button>
 
                   <button
                     onClick={() => setIsResearchSimulationOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-mono font-semibold transition-all ml-auto"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-900 text-[10px] sm:text-xs font-mono font-semibold transition-all ml-auto"
                   >
-                    <Play className="w-3 h-3 fill-current" />
+                    <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
                     <span>Simulation Testbed</span>
                   </button>
 
@@ -575,9 +597,9 @@ export default function Home() {
                     href={research.githubUrl || personal.github}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-all"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-all"
                   >
-                    <Github className="w-3.5 h-3.5" />
+                    <Github className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     <span>Code</span>
                   </a>
                 </div>
@@ -587,23 +609,23 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: SKILLS                                        */}
             {/* ------------------------------------------------------ */}
-            <section id="skills" className="scroll-mt-12" aria-label="Skills">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="skills" className="scroll-mt-16 sm:scroll-mt-12" aria-label="Skills">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Skills
                 </h2>
               </div>
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-[10px] sm:text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">
                     Software Engineering
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {['Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'SQL', 'PostgreSQL', 'Electron', 'REST APIs', 'Git'].map((s) => (
                       <span
                         key={s}
-                        className="px-3 py-1 rounded-md bg-indigo-50 text-xs font-mono text-indigo-700 border border-indigo-200"
+                        className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md bg-indigo-50 text-[10px] sm:text-xs font-mono text-indigo-700 border border-indigo-200"
                       >
                         {s}
                       </span>
@@ -611,15 +633,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-purple-600 uppercase tracking-wider">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-[10px] sm:text-xs font-mono font-bold text-purple-600 uppercase tracking-wider">
                     Cloud &amp; Infrastructure
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {['AWS', 'EC2', 'S3', 'Lambda', 'DynamoDB', 'CloudWatch', 'IAM', 'WAF', 'GuardDuty'].map((s) => (
                       <span
                         key={s}
-                        className="px-3 py-1 rounded-md bg-purple-50 text-xs font-mono text-purple-700 border border-purple-200"
+                        className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md bg-purple-50 text-[10px] sm:text-xs font-mono text-purple-700 border border-purple-200"
                       >
                         {s}
                       </span>
@@ -627,15 +649,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-red-600 uppercase tracking-wider">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-[10px] sm:text-xs font-mono font-bold text-red-600 uppercase tracking-wider">
                     Cybersecurity
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {['Network Security', 'Web Security', 'NIDS', 'Vulnerability Assessment', 'Burp Suite', 'Nmap', 'Wireshark', 'Penetration Testing'].map((s) => (
                       <span
                         key={s}
-                        className="px-3 py-1 rounded-md bg-red-50 text-xs font-mono text-red-700 border border-red-200"
+                        className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md bg-red-50 text-[10px] sm:text-xs font-mono text-red-700 border border-red-200"
                       >
                         {s}
                       </span>
@@ -643,15 +665,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="text-xs font-mono font-bold text-blue-600 uppercase tracking-wider">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="text-[10px] sm:text-xs font-mono font-bold text-blue-600 uppercase tracking-wider">
                     AI / Machine Learning
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {['TensorFlow', 'Keras', 'PyTorch', 'Transformers', 'CNN', 'BiLSTM', 'Scikit-Learn', 'Deep Learning'].map((s) => (
                       <span
                         key={s}
-                        className="px-3 py-1 rounded-md bg-blue-50 text-xs font-mono text-blue-700 border border-blue-200"
+                        className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-md bg-blue-50 text-[10px] sm:text-xs font-mono text-blue-700 border border-blue-200"
                       >
                         {s}
                       </span>
@@ -664,47 +686,47 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: CERTIFICATIONS & ACTIVITIES                   */}
             {/* ------------------------------------------------------ */}
-            <section id="certifications" className="scroll-mt-12" aria-label="Certifications">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <section id="certifications" className="scroll-mt-16 sm:scroll-mt-12" aria-label="Certifications">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Certifications
                 </h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {certifications.map((cert) => (
                   <div
                     key={cert.title}
-                    className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between gap-3"
+                    className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between gap-2 sm:gap-3"
                   >
                     <div className="space-y-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
+                      <div className="flex items-center gap-2 text-[10px] sm:text-xs font-mono text-slate-500">
                         <span>{cert.issuer}</span>
                         <span>·</span>
                         <span>{cert.date}</span>
                       </div>
-                      <h3 className="font-bold text-slate-900 text-sm">
+                      <h3 className="font-bold text-slate-900 text-xs sm:text-sm">
                         {cert.title}
                       </h3>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       <button
                         onClick={() => setSelectedCert(cert)}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-mono font-medium transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] sm:text-xs font-mono font-medium transition-colors"
                       >
                         <span>View Document</span>
-                        <ChevronRight className="w-3 h-3" />
+                        <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                       </button>
                       {cert.verificationUrl && (
                         <a
                           href={cert.verificationUrl}
                           target="_blank"
                           rel="noreferrer noopener"
-                          className="p-1.5 rounded text-indigo-500 hover:text-indigo-700 transition-colors"
+                          className="p-1 rounded text-indigo-500 hover:text-indigo-700 transition-colors"
                           title="Verify Credential"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </a>
                       )}
                     </div>
@@ -716,11 +738,11 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* SECTION: CONTACT                                       */}
             {/* ------------------------------------------------------ */}
-            <section id="contact" className="scroll-mt-12 space-y-8" aria-label="Contact information and inquiry">
+            <section id="contact" className="scroll-mt-16 sm:scroll-mt-12 space-y-6 sm:space-y-8" aria-label="Contact information and inquiry">
               
               {/* Mobile Sticky Section Header */}
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-white/95 px-6 py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
-                <h2 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="sticky top-0 z-20 -mx-6 mb-3 sm:mb-4 w-screen bg-white/95 px-6 py-3 sm:py-4 backdrop-blur md:-mx-12 md:px-12 lg:sr-only border-b border-slate-100 lg:border-none">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Contact
                 </h2>
               </div>
@@ -739,64 +761,64 @@ export default function Home() {
               </div>
 
               {/* Quick Communication Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 
                 {/* Email Card */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-500">
+                <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 sm:space-y-2">
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-slate-500">
                     <span className="font-semibold uppercase tracking-wider">DIRECT EMAIL</span>
-                    <Mail className="w-4 h-4 text-slate-900" />
+                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900" />
                   </div>
-                  <div className="font-semibold text-slate-900 text-sm break-all">
+                  <div className="font-semibold text-slate-900 text-xs sm:text-sm break-all">
                     ayushsharmasd03@gmail.com
                   </div>
                   <div className="flex items-center gap-2 pt-1">
                     <a
                       href="mailto:ayushsharmasd03@gmail.com"
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-semibold transition-colors shadow-xs"
+                      className="inline-flex items-center gap-1 px-3 py-2 sm:py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-[10px] sm:text-xs font-mono font-semibold transition-colors shadow-xs min-h-[44px]"
                     >
-                      <Send className="w-3 h-3" />
+                      <Send className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                       <span>Email Me</span>
                     </a>
                     <button
                       type="button"
                       onClick={handleCopyEmail}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 text-xs font-mono font-medium transition-colors"
+                      className="inline-flex items-center gap-1 px-3 py-2 sm:py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 text-[10px] sm:text-xs font-mono font-medium transition-colors min-h-[44px]"
                     >
-                      {copiedEmail ? <Check className="w-3 h-3 text-slate-900" /> : <Copy className="w-3 h-3 text-slate-600" />}
+                      {copiedEmail ? <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-900" /> : <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-600" />}
                       <span>{copiedEmail ? 'Copied!' : 'Copy Address'}</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Location & Status Card */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-500">
+                <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 sm:space-y-2">
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-slate-500">
                     <span className="font-semibold uppercase tracking-wider">STATUS & LOCATION</span>
-                    <MapPin className="w-4 h-4 text-slate-900" />
+                    <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900" />
                   </div>
-                  <div className="font-semibold text-slate-900 text-sm">
+                  <div className="font-semibold text-slate-900 text-xs sm:text-sm">
                     Gurugram, Haryana, India
                   </div>
-                  <div className="text-xs text-slate-600 leading-normal pt-1">
+                  <div className="text-[10px] sm:text-xs text-slate-600 leading-normal pt-1">
                     Available for Full-Time Roles · Open to Remote &amp; Relocation
                   </div>
                 </div>
 
                 {/* Professional Channels */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-500">
+                <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 sm:space-y-2">
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-slate-500">
                     <span className="font-semibold uppercase tracking-wider">LINKEDIN & GITHUB</span>
-                    <ExternalLink className="w-4 h-4 text-slate-900" />
+                    <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900" />
                   </div>
-                  <div className="flex flex-col gap-1 text-xs">
+                  <div className="flex flex-col gap-1 text-[10px] sm:text-xs">
                     <a
                       href="https://linkedin.com/in/ayush-sharma-805810218/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 font-semibold text-slate-900 hover:underline"
                     >
-                      <Linkedin className="w-3.5 h-3.5 text-slate-900" />
+                      <Linkedin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-900" />
                       <span>linkedin.com/in/ayush-sharma-805810218</span>
                     </a>
                     <a
@@ -805,28 +827,28 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 font-semibold text-slate-900 hover:underline"
                     >
-                      <Github className="w-3.5 h-3.5 text-slate-900" />
+                      <Github className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-900" />
                       <span>github.com/ObsureBat</span>
                     </a>
                   </div>
                 </div>
 
                 {/* Phone / Direct Line */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-500">
+                <div className="p-3 sm:p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 sm:space-y-2">
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-slate-500">
                     <span className="font-semibold uppercase tracking-wider">DIRECT PHONE</span>
-                    <Phone className="w-4 h-4 text-slate-900" />
+                    <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900" />
                   </div>
-                  <div className="font-semibold text-slate-900 text-sm">
+                  <div className="font-semibold text-slate-900 text-xs sm:text-sm">
                     +91-7668581706
                   </div>
                   <div className="pt-1">
                     <a
                       href="tel:+917668581706"
-                      className="inline-flex items-center gap-1 font-mono text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
+                      className="inline-flex items-center gap-1 font-mono text-[10px] sm:text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
                     >
                       <span>Call or WhatsApp</span>
-                      <ArrowUpRight className="w-3 h-3" />
+                      <ArrowUpRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </a>
                   </div>
                 </div>
@@ -834,26 +856,26 @@ export default function Home() {
               </div>
 
               {/* Direct Interactive Message Box */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+              <div className="p-4 sm:p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div className="space-y-0.5">
-                    <h4 className="font-bold text-slate-900 text-base">
+                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">
                       Send a Direct Message
                     </h4>
-                    <p className="text-xs text-slate-500 font-mono">
+                    <p className="text-[10px] sm:text-xs text-slate-500 font-mono">
                       Opens formatted draft in your email client with 1 click
                     </p>
                   </div>
-                  <MessageSquare className="w-5 h-5 text-slate-900" />
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900" />
                 </div>
 
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   {/* Topic Selector Pills */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider block">
+                    <label className="text-[10px] sm:text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider block">
                       Inquiry Topic:
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {[
                         'Software Engineering Opportunity',
                         'Cloud & Security Architecture',
@@ -864,7 +886,7 @@ export default function Home() {
                           key={topic}
                           type="button"
                           onClick={() => setContactSubject(topic)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                          className={`px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-mono transition-colors min-h-[44px] ${
                             contactSubject === topic
                               ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold'
                               : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200'
@@ -879,7 +901,7 @@ export default function Home() {
                   {/* Form Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-xs font-mono font-medium text-slate-600 block">
+                      <label className="text-[10px] sm:text-xs font-mono font-medium text-slate-600 block">
                         Your Name *
                       </label>
                       <input
@@ -888,12 +910,12 @@ export default function Home() {
                         value={contactForm.name}
                         onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                         placeholder="e.g. Jane Doe"
-                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
+                        className="w-full px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-mono font-medium text-slate-600 block">
+                      <label className="text-[10px] sm:text-xs font-mono font-medium text-slate-600 block">
                         Your Email *
                       </label>
                       <input
@@ -902,13 +924,13 @@ export default function Home() {
                         value={contactForm.email}
                         onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                         placeholder="e.g. jane@company.com"
-                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
+                        className="w-full px-3 py-2.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono font-medium text-slate-600 block">
+                    <label className="text-[10px] sm:text-xs font-mono font-medium text-slate-600 block">
                       Message *
                     </label>
                     <textarea
@@ -917,22 +939,22 @@ export default function Home() {
                       value={contactForm.message}
                       onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                       placeholder="Hi Ayush, I came across your portfolio and wanted to reach out regarding..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
+                      className="w-full px-3 py-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors text-xs sm:text-sm"
                     />
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                     <button
                       type="submit"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs font-semibold uppercase tracking-wider transition-colors shadow-xs"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-colors shadow-xs min-h-[44px]"
                     >
-                      <Send className="w-3.5 h-3.5" />
+                      <Send className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       <span>Send via Email Client</span>
                     </button>
 
                     {formSent && (
-                      <div className="flex items-center gap-1.5 text-xs font-mono text-slate-900 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-                        <Check className="w-3.5 h-3.5 text-slate-900" />
+                      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-slate-900 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                        <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-900" />
                         <span>Email draft launched! Check your mail window.</span>
                       </div>
                     )}
@@ -945,7 +967,7 @@ export default function Home() {
             {/* ------------------------------------------------------ */}
             {/* FOOTER — CLEAN MINIMAL (NO "HOW I MADE THIS")           */}
             {/* ------------------------------------------------------ */}
-            <footer className="pt-8 pb-16 border-t border-slate-200 text-xs text-slate-500 font-sans space-y-1">
+            <footer className="pt-6 sm:pt-8 pb-20 sm:pb-16 lg:pb-16 border-t border-slate-200 text-xs text-slate-500 font-sans space-y-1">
               <p className="text-slate-900 font-bold">
                 © 2026 Ayush Sharma
               </p>
@@ -956,6 +978,36 @@ export default function Home() {
 
           </main>
 
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* MOBILE BOTTOM NAVIGATION BAR                             */}
+      {/* ======================================================== */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200">
+        <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto scrollbar-hide" id="mobile-nav">
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById(item.id);
+                  if (!el) return;
+                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                  window.scrollTo({ top, behavior: 'smooth' });
+                }}
+                className={`flex-shrink-0 px-3 py-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap min-h-[44px] ${
+                  isActive
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
